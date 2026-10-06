@@ -2,22 +2,23 @@
 
 @layer base {
   :root {
-    --bg-main: #050505;
-    --bg-surface: #0a0a0c;
-    --bg-surface-elevated: #121217;
-    --bg-surface-hover: #181820;
-    --text-primary: #f5f5f5;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
+    --bg-main: #000000;
+    --bg-surface: #08080a;
+    --bg-surface-elevated: #111115;
+    --bg-surface-hover: #18181f;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
     --border-subtle: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);
     --accent-primary: #6366f1;
     --accent-primary-hover: #4f46e5;
-    --accent-secondary: #a855f7;
-    --accent-glow: rgba(99, 102, 241, 0.15);
+    --accent-secondary: #8b5cf6;
+    --accent-cyan: #06b6d4;
+    --accent-glow: rgba(99, 102, 241, 0.18);
     --selection-bg: rgba(99, 102, 241, 0.35);
     --selection-text: #ffffff;
-    --grid-line: rgba(255, 255, 255, 0.03);
+    --grid-line: rgba(255, 255, 255, 0.025);
   }
 
   html.light {
@@ -33,6 +34,7 @@
     --accent-primary: #4f46e5;
     --accent-primary-hover: #4338ca;
     --accent-secondary: #9333ea;
+    --accent-cyan: #0891b2;
     --accent-glow: rgba(79, 70, 229, 0.12);
     --selection-bg: rgba(79, 70, 229, 0.25);
     --selection-text: #0f172a;
@@ -70,13 +72,13 @@
 /* Fluid Typography Utilities */
 .text-hero-display {
   font-size: clamp(2.75rem, 7.5vw, 6.5rem);
-  line-height: 1.05;
+  line-height: 1.02;
   letter-spacing: -0.04em;
 }
 
 .text-section-title {
   font-size: clamp(2rem, 4.5vw, 3.75rem);
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.03em;
 }
 
@@ -106,17 +108,17 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 140, 0.25);
+  background: rgba(140, 140, 160, 0.25);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 120, 140, 0.45);
+  background: rgba(140, 140, 160, 0.45);
 }
 
-/* Engineering Grid Background */
+/* Engineering Grid & Mesh Backgrounds */
 .bg-tech-grid {
-  background-size: 40px 40px;
+  background-size: 48px 48px;
   background-image: 
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
@@ -124,17 +126,18 @@
 
 .bg-radial-gradient-hero {
   background: radial-gradient(
-    circle at 50% 20%,
-    rgba(99, 102, 241, 0.12) 0%,
-    rgba(168, 85, 247, 0.05) 35%,
-    transparent 70%
+    circle at 50% 15%,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(139, 92, 246, 0.06) 35%,
+    rgba(6, 182, 212, 0.03) 60%,
+    transparent 80%
   );
 }
 
 .bg-radial-gradient-contact {
   background: radial-gradient(
     circle at 50% 80%,
-    rgba(99, 102, 241, 0.14) 0%,
+    rgba(99, 102, 241, 0.16) 0%,
     rgba(147, 51, 234, 0.08) 40%,
     transparent 75%
   );
@@ -142,45 +145,94 @@
 
 /* Glassmorphic Surfaces */
 .glass-panel {
-  background: rgba(18, 18, 23, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(14, 14, 18, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 html.light .glass-panel {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-}
-
-.glass-nav {
-  background: rgba(10, 10, 12, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-html.light .glass-nav {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-nav {
+  background: rgba(8, 8, 10, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+html.light .glass-nav {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Bento Card Styles */
+.bento-card {
+  background: rgba(12, 12, 16, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 25px 50px -20px rgba(99, 102, 241, 0.18);
+  transform: translateY(-2px);
+}
+
+html.light .bento-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+html.light .bento-card:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 20px 40px -15px rgba(79, 70, 229, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Subtle Glow Effects */
 .glow-primary {
-  box-shadow: 0 0 30px -5px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 35px -5px rgba(99, 102, 241, 0.3);
 }
 
-.glow-card-hover {
-  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+.glow-cyan {
+  box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.3);
 }
 
-.glow-card-hover:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
+/* Linear-style Shimmer Gradient Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
 }
 
 /* Animations and Transitions */

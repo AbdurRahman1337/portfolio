@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { philosophies } from "@/data/philosophy";
-
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { MotionReveal } from "@/components/ui/MotionReveal";
 
 export function Philosophy() {
   const [activeHover, setActiveHover] = useState<string | null>(null);
@@ -15,35 +17,38 @@ export function Philosophy() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-14 sm:mb-16">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs font-semibold text-indigo-400 uppercase tracking-widest">
-              06 / Engineering Mindset
-            </span>
-            <div className="h-px w-8 bg-indigo-500/40" />
+        <MotionReveal>
+          <div className="mb-14 sm:mb-16">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="font-mono text-xs font-semibold text-indigo-400 uppercase tracking-widest">
+                06 / Engineering Mindset
+              </span>
+              <div className="h-px w-8 bg-indigo-500/40" />
+            </div>
+            <h2 className="font-display font-bold text-section-title text-zinc-100 dark:text-zinc-100 light:text-zinc-900 tracking-tight">
+              Development Philosophy.
+            </h2>
+            <p className="text-base sm:text-lg text-zinc-400 dark:text-zinc-400 light:text-zinc-600 mt-2 max-w-xl">
+              Five engineering principles that guide how I architect, build, and deliver software.
+            </p>
           </div>
-          <h2 className="font-display font-bold text-section-title text-zinc-100 dark:text-zinc-100 light:text-zinc-900 tracking-tight">
-            Development Philosophy.
-          </h2>
-          <p className="text-base sm:text-lg text-zinc-400 dark:text-zinc-400 light:text-zinc-600 mt-2 max-w-xl">
-            Five engineering principles that guide how I architect, build, and deliver software.
-          </p>
-        </div>
+        </MotionReveal>
 
         {/* Philosophy List / Cards */}
         <div className="space-y-4 sm:space-y-6">
-          {philosophies.map((item) => {
-            const isHovered = activeHover === item.number;
-            return (
-              <div
-                key={item.number}
+          {philosophies.map((item, idx) => (
+            <motion.div
+              key={item.number}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <SpotlightCard
+                enableTilt={true}
                 onMouseEnter={() => setActiveHover(item.number)}
                 onMouseLeave={() => setActiveHover(null)}
-                className={`p-6 sm:p-8 rounded-3xl transition-all duration-300 border ${
-                  isHovered
-                    ? "bg-[#0f0f16] dark:bg-[#0f0f16] light:bg-white border-indigo-500/40 shadow-xl shadow-indigo-500/5 -translate-y-0.5"
-                    : "bg-[#09090c] dark:bg-[#09090c] light:bg-zinc-50 border-white/10 dark:border-white/10 light:border-zinc-200"
-                }`}
+                className="p-6 sm:p-8 hover:border-indigo-500/50 transition-all"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   {/* Number & Title */}
@@ -59,7 +64,7 @@ export function Philosophy() {
                         {item.keywords.map((kw) => (
                           <span
                             key={kw}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] dark:bg-white/[0.04] light:bg-zinc-200/70 text-zinc-400"
+                            className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/[0.04] dark:bg-white/[0.04] light:bg-zinc-200/70 text-zinc-400 border border-white/5"
                           >
                             {kw}
                           </span>
@@ -70,7 +75,7 @@ export function Philosophy() {
 
                   {/* Statement & Detailed Explanation */}
                   <div className="lg:col-span-8 space-y-2">
-                    <p className="text-base sm:text-lg font-display font-medium text-zinc-200 dark:text-zinc-200 light:text-zinc-800">
+                    <p className="text-base sm:text-lg font-display font-medium text-zinc-200 dark:text-zinc-200 light:text-zinc-800 leading-snug">
                       &ldquo;{item.statement}&rdquo;
                     </p>
                     <p className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-400 light:text-zinc-600 leading-relaxed font-normal">
@@ -78,12 +83,11 @@ export function Philosophy() {
                     </p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              </SpotlightCard>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-

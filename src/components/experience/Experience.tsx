@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { experiences } from "@/data/experience";
 import { Badge } from "@/components/ui/Badge";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { MotionReveal } from "@/components/ui/MotionReveal";
 import {
   ExternalLink,
   Calendar,
@@ -15,35 +18,44 @@ export function Experience() {
     <section
       id="experience"
       aria-label="Professional Experience"
-      className="py-24 sm:py-32 relative border-t border-white/5 dark:border-white/5 light:border-zinc-200"
+      className="py-24 sm:py-32 relative border-t border-white/5 dark:border-white/5 light:border-zinc-200 scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-14 sm:mb-16">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs font-semibold text-indigo-400 uppercase tracking-widest">
-              05 / Professional Experience
-            </span>
-            <div className="h-px w-8 bg-indigo-500/40" />
+        <MotionReveal>
+          <div className="mb-14 sm:mb-16">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="font-mono text-xs font-semibold text-indigo-400 uppercase tracking-widest">
+                05 / Professional Experience
+              </span>
+              <div className="h-px w-8 bg-indigo-500/40" />
+            </div>
+            <h2 className="font-display font-bold text-section-title text-zinc-100 dark:text-zinc-100 light:text-zinc-900 tracking-tight">
+              Work Experience & Timeline.
+            </h2>
+            <p className="text-base sm:text-lg text-zinc-400 dark:text-zinc-400 light:text-zinc-600 mt-2 max-w-xl">
+              Professional development history, technical contributions, and software delivery.
+            </p>
           </div>
-          <h2 className="font-display font-bold text-section-title text-zinc-100 dark:text-zinc-100 light:text-zinc-900 tracking-tight">
-            Work Experience & Timeline.
-          </h2>
-          <p className="text-base sm:text-lg text-zinc-400 dark:text-zinc-400 light:text-zinc-600 mt-2 max-w-xl">
-            Professional development history, technical contributions, and software delivery.
-          </p>
-        </div>
+        </MotionReveal>
 
         {/* Timeline Container */}
         <div className="relative pl-6 sm:pl-8 border-l border-white/10 dark:border-white/10 light:border-zinc-300 space-y-12 sm:space-y-16">
-          {experiences.map((exp) => (
-            <div key={exp.id} className="relative group">
+          {experiences.map((exp, idx) => (
+            <motion.div
+              key={exp.id}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="relative group"
+            >
               {/* Timeline Node Icon / Dot */}
               <div
-                className={`absolute -left-[31px] sm:-left-[39px] top-1.5 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border transition-all ${
+                className={`absolute -left-[31px] sm:-left-[39px] top-4 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border transition-all ${
                   exp.isCurrent
-                    ? "bg-indigo-600 border-indigo-400 shadow-lg shadow-indigo-600/30"
-                    : "bg-[#050505] dark:bg-[#050505] light:bg-zinc-200 border-white/20 dark:border-white/20 light:border-zinc-400"
+                    ? "bg-indigo-600 border-indigo-400 shadow-lg shadow-indigo-600/40 ring-4 ring-indigo-500/20"
+                    : "bg-[#000000] dark:bg-[#000000] light:bg-zinc-200 border-white/20 dark:border-white/20 light:border-zinc-400"
                 }`}
               >
                 {exp.isCurrent ? (
@@ -53,12 +65,13 @@ export function Experience() {
                 )}
               </div>
 
-              {/* Experience Card */}
-              <div
-                className={`p-6 sm:p-8 rounded-3xl bg-[#0a0a0e] dark:bg-[#0a0a0e] light:bg-white border transition-all duration-300 ${
+              {/* Experience Card with Spotlight */}
+              <SpotlightCard
+                enableTilt={true}
+                className={`p-6 sm:p-8 transition-all duration-300 ${
                   exp.isCurrent
-                    ? "border-indigo-500/30 hover:border-indigo-500/50 shadow-xl shadow-indigo-500/5"
-                    : "border-white/10 dark:border-white/10 light:border-zinc-300 hover:border-white/20"
+                    ? "border-indigo-500/40 hover:border-indigo-500/60 shadow-xl shadow-indigo-500/10"
+                    : "border-white/10 dark:border-white/10 light:border-zinc-300 hover:border-white/25"
                 }`}
               >
                 {/* Header row with role, company, period */}
@@ -124,18 +137,17 @@ export function Experience() {
                   {exp.technologies.map((t) => (
                     <span
                       key={t}
-                      className="px-2.5 py-1 rounded-md bg-white/[0.03] dark:bg-white/[0.03] light:bg-zinc-100 text-[11px] font-mono text-zinc-400 dark:text-zinc-400 light:text-zinc-600 border border-white/5"
+                      className="px-2.5 py-1 rounded-lg bg-white/[0.04] dark:bg-white/[0.04] light:bg-zinc-100 text-[11px] font-mono text-zinc-400 dark:text-zinc-400 light:text-zinc-600 border border-white/5"
                     >
                       {t}
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
+              </SpotlightCard>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
 }
-

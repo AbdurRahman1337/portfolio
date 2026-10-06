@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { NoiseOverlay } from "@/components/ui/NoiseOverlay";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { SmoothScroll } from "@/components/layout/SmoothScroll";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -120,10 +121,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col relative selection:bg-indigo-500/30">
         <ThemeProvider>
-          <NoiseOverlay />
-          <CustomCursor />
-          <CommandPalette />
-          {children}
+          <SmoothScroll>
+            <NoiseOverlay />
+            <CustomCursor />
+            <CommandPalette />
+            {children}
+          </SmoothScroll>
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
+import Link from "next/link";
 import { Project } from "@/data/projects";
+import { soundFx } from "@/lib/sound";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { GithubIcon } from "@/components/ui/Icons";
@@ -100,11 +102,24 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
 
           {/* Quick Action Links if available */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
+            <Link
+              href={`/work/${project.slug}`}
+              onClick={() => {
+                soundFx.playClick();
+                onClose();
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-md shadow-indigo-600/20"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Full Standalone Page</span>
+            </Link>
+
             {project.appStoreUrl && (
               <a
                 href={project.appStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium transition-colors shadow-md shadow-emerald-600/20"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -116,10 +131,11 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-md shadow-indigo-600/20"
+                onClick={() => soundFx.playClick()}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.06] dark:bg-white/[0.06] light:bg-zinc-100 hover:bg-white/[0.12] text-zinc-200 dark:text-zinc-200 light:text-zinc-800 border border-white/10 text-xs font-medium transition-colors"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Live Demo / App</span>
+                <ExternalLink className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Live Demo</span>
               </a>
             )}
             {project.githubUrl && (
@@ -127,6 +143,7 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.06] dark:bg-white/[0.06] light:bg-zinc-100 hover:bg-white/[0.12] light:hover:bg-zinc-200 text-zinc-200 dark:text-zinc-200 light:text-zinc-800 border border-white/10 dark:border-white/15 light:border-zinc-300 text-xs font-medium transition-colors"
               >
                 <GithubIcon className="w-3.5 h-3.5" />
@@ -134,6 +151,27 @@ export function CaseStudyModal({ project, onClose }: CaseStudyModalProps) {
               </a>
             )}
           </div>
+
+          {/* Quantitative Metrics Highlight */}
+          {project.metrics && project.metrics.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-white/[0.02] dark:bg-white/[0.02] light:bg-zinc-50 border border-white/10">
+              {project.metrics.map((m, idx) => (
+                <div key={idx} className="text-center">
+                  <div className="font-display font-bold text-lg sm:text-xl text-indigo-400">
+                    {m.value}
+                  </div>
+                  <div className="text-xs font-semibold text-zinc-200 dark:text-zinc-200 light:text-zinc-800">
+                    {m.label}
+                  </div>
+                  {m.detail && (
+                    <div className="text-[10px] font-mono text-zinc-500 mt-0.5">
+                      {m.detail}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Key Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-white/[0.03] dark:bg-white/[0.03] light:bg-zinc-50 border border-white/10 dark:border-white/10 light:border-zinc-200 text-xs">

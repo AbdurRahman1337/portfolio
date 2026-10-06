@@ -2,10 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { personalInfo } from "@/data/profile";
 import { socialLinks } from "@/data/social";
+import { soundFx } from "@/lib/sound";
 import { Button } from "@/components/ui/Button";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { MotionReveal } from "@/components/ui/MotionReveal";
 import confetti from "canvas-confetti";
 import {
   Mail,
@@ -14,11 +18,13 @@ import {
   Send,
   FileDown,
   ArrowUpRight,
+  AlertCircle,
 } from "lucide-react";
 
 export function Contact() {
   const [copied, setCopied] = useState(false);
-  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "sent">("idle");
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,6 +40,7 @@ export function Contact() {
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(personalInfo.email);
     setCopied(true);
+    soundFx.playSuccess();
     try {
       confetti({
         particleCount: 30,
@@ -47,37 +54,59 @@ export function Contact() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setFormStatus("submitting");
-    setTimeout(() => {
-      setFormStatus("sent");
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ["#6366f1", "#a855f7", "#10b981"],
-        });
-      } catch {}
-    }, 800);
+    setErrorMessage("");
+    soundFx.playClick(900);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setFormStatus("sent");
+        soundFx.playSuccess();
+        try {
+          confetti({
+            particleCount: 50,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#6366f1", "#a855f7", "#10b981"],
+          });
+        } catch {}
+      } else {
+        setFormStatus("error");
+        setErrorMessage(data.error || "Failed to send message. Please email me directly.");
+      }
+    } catch {
+      setFormStatus("error");
+      setErrorMessage("Network error occurred. Please contact me directly via email.");
+    }
   };
 
   return (
     <section
       id="contact"
       aria-label="Contact Section"
-      className="py-24 sm:py-32 relative border-t border-white/5 dark:border-white/5 light:border-zinc-200 bg-radial-gradient-contact overflow-hidden"
+      className="py-24 sm:py-32 relative border-t border-white/5 dark:border-white/5 light:border-zinc-200 bg-radial-gradient-contact overflow-hidden scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: Heading, Bio CTA, Direct Links (lg:col-span-6) */}
-          <div className="lg:col-span-6 space-y-6">
+          <MotionReveal direction="left" className="lg:col-span-6 space-y-6">
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs font-semibold text-indigo-400 uppercase tracking-widest">
-                08 / Get in Touch
+                09 / Get in Touch
               </span>
               <div className="h-px w-8 bg-indigo-500/40" />
             </div>
@@ -87,7 +116,7 @@ export function Contact() {
             </h2>
 
             <p className="text-base sm:text-lg text-zinc-400 dark:text-zinc-400 light:text-zinc-600 leading-relaxed max-w-lg font-normal">
-              Whether it&apos;s a web application, mobile product, or a frontend challenge, I&apos;m interested in building fast, reliable, and production-quality software.
+              Whether it&apos;s a web application, mobile product, or a frontend engineering challenge, I&apos;m interested in building fast, reliable, and production-quality software.
             </p>
 
             {/* Email Copy Card with Avatar */}
@@ -142,6 +171,7 @@ export function Contact() {
               <a
                 href={emailLink}
                 data-cursor="talk"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-medium text-indigo-200 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4 text-indigo-400" />
@@ -154,6 +184,7 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor="open"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] dark:bg-white/[0.05] light:bg-zinc-100 hover:bg-white/[0.1] light:hover:bg-zinc-200 border border-white/10 dark:border-white/15 light:border-zinc-300 text-xs font-medium text-zinc-200 dark:text-zinc-200 light:text-zinc-800 transition-colors"
               >
                 <LinkedinIcon className="w-4 h-4 text-indigo-400" />
@@ -166,6 +197,7 @@ export function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor="open"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] dark:bg-white/[0.05] light:bg-zinc-100 hover:bg-white/[0.1] light:hover:bg-zinc-200 border border-white/10 dark:border-white/15 light:border-zinc-300 text-xs font-medium text-zinc-200 dark:text-zinc-200 light:text-zinc-800 transition-colors"
               >
                 <GithubIcon className="w-4 h-4 text-zinc-400" />
@@ -177,6 +209,7 @@ export function Contact() {
                 href={resumeLink}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => soundFx.playClick()}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] dark:bg-white/[0.05] light:bg-zinc-100 hover:bg-white/[0.1] light:hover:bg-zinc-200 border border-white/10 dark:border-white/15 light:border-zinc-300 text-xs font-medium text-zinc-200 dark:text-zinc-200 light:text-zinc-800 transition-colors"
               >
                 <FileDown className="w-4 h-4 text-indigo-400" />
@@ -184,21 +217,21 @@ export function Contact() {
                 <ArrowUpRight className="w-3 h-3 text-zinc-500" />
               </a>
             </div>
-          </div>
+          </MotionReveal>
 
           {/* Right Column: Interactive Contact Inquiry Form (lg:col-span-6) */}
-          <div className="lg:col-span-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#0a0a0e] dark:bg-[#0a0a0e] light:bg-white border border-white/10 dark:border-white/10 light:border-zinc-300 shadow-2xl relative">
+          <MotionReveal direction="right" className="lg:col-span-6">
+            <SpotlightCard enableTilt={true} className="p-6 sm:p-8 shadow-2xl relative">
               {formStatus === "sent" ? (
                 <div className="py-12 flex flex-col items-center text-center space-y-4">
                   <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                     <Check className="w-7 h-7" />
                   </div>
                   <h3 className="font-display font-bold text-2xl text-zinc-100 dark:text-zinc-100 light:text-zinc-900">
-                    Message Prepared
+                    Message Delivered
                   </h3>
                   <p className="text-sm text-zinc-400 max-w-sm">
-                    Thank you for reaching out! You can also connect directly via email at {personalInfo.email}.
+                    Thank you for reaching out! Abdurrahman will get back to you shortly. You can also connect directly at {personalInfo.email}.
                   </p>
                   <Button
                     size="sm"
@@ -226,6 +259,13 @@ export function Contact() {
                       Abdurrahman • TechNext
                     </span>
                   </div>
+
+                  {formStatus === "error" && (
+                    <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
 
                   {/* Name input */}
                   <div>
@@ -332,7 +372,7 @@ export function Contact() {
                     data-cursor="talk"
                   >
                     {formStatus === "submitting" ? (
-                      <span>Sending...</span>
+                      <span>Sending Message...</span>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
@@ -342,8 +382,8 @@ export function Contact() {
                   </Button>
                 </form>
               )}
-            </div>
-          </div>
+            </SpotlightCard>
+          </MotionReveal>
         </div>
       </div>
     </section>

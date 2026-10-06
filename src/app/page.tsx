@@ -5,6 +5,8 @@ import { Preloader } from "@/components/layout/Preloader";
 import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/hero/Hero";
 import { SelectedWork } from "@/components/projects/SelectedWork";
+import { GlobalWorkflow } from "@/components/workflow/GlobalWorkflow";
+import { UiLab } from "@/components/lab/UiLab";
 import { About } from "@/components/about/About";
 import { TechStack } from "@/components/stack/TechStack";
 import { Experience } from "@/components/experience/Experience";
@@ -13,45 +15,71 @@ import { Ecosystem } from "@/components/ecosystem/Ecosystem";
 import { Contact } from "@/components/contact/Contact";
 import { Footer } from "@/components/layout/Footer";
 
+// Mapping secondary/sub-sections to main navbar items
+const sectionToNavMap: Record<string, string> = {
+  hero: "hero",
+  work: "work",
+  process: "process",
+  lab: "lab",
+  about: "about",
+  stack: "stack",
+  experience: "experience",
+  philosophy: "experience",
+  ecosystem: "stack",
+  contact: "contact",
+};
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState<string>("hero");
 
   useEffect(() => {
-    const sectionIds = [
-      "hero",
-      "work",
-      "about",
-      "stack",
-      "experience",
-      "philosophy",
-      "ecosystem",
-      "contact",
-    ];
+    const handleScroll = () => {
+      // 1. Bottom of page check (ensures contact is always highlighted at the end)
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 80
+      ) {
+        setActiveSection("contact");
+        return;
+      }
 
-    const observerCallback: IntersectionObserverCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
+      // 2. Very top of page check (hero)
+      if (window.scrollY < 140) {
+        setActiveSection("hero");
+        return;
+      }
+
+      // 3. Check section positions from bottom to top
+      const orderedSectionIds = [
+        "contact",
+        "ecosystem",
+        "philosophy",
+        "experience",
+        "stack",
+        "about",
+        "lab",
+        "process",
+        "work",
+      ];
+
+      for (const id of orderedSectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // If section top has entered the upper 35% of the viewport
+          if (rect.top <= window.innerHeight * 0.35) {
+            const mapped = sectionToNavMap[id] || id;
+            setActiveSection(mapped);
+            break;
+          }
         }
-      });
+      }
     };
 
-    const observerOptions = {
-      root: null,
-      rootMargin: "-20% 0px -60% 0px",
-      threshold: 0,
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -60,12 +88,17 @@ export default function Home() {
       <Preloader />
 
       {/* Floating Sticky Glass Navigation */}
-      <Header activeSection={activeSection} />
+      <Header
+        activeSection={activeSection}
+        onSectionSelect={(section) => setActiveSection(section)}
+      />
 
       {/* Main Single-Page Storytelling Content */}
       <main className="flex-1">
         <Hero />
         <SelectedWork />
+        <GlobalWorkflow />
+        <UiLab />
         <About />
         <TechStack />
         <Experience />

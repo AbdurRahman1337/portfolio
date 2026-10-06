@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { personalInfo } from "@/data/profile";
 import { socialLinks } from "@/data/social";
+import { soundFx } from "@/lib/sound";
+import { RecruiterModal } from "@/components/recruiter/RecruiterModal";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 import {
   Search,
@@ -21,6 +23,10 @@ import {
   Copy,
   Check,
   X,
+  Volume2,
+  VolumeX,
+  Zap,
+  Cpu,
 } from "lucide-react";
 
 interface CommandItem {
@@ -34,6 +40,7 @@ interface CommandItem {
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
+  const [recruiterOpen, setRecruiterOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -44,6 +51,7 @@ export function CommandPalette() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
+        soundFx.playPop(1200);
         setIsOpen((prev) => !prev);
       } else if (e.key === "Escape" && isOpen) {
         e.preventDefault();
@@ -56,6 +64,7 @@ export function CommandPalette() {
   }, [isOpen]);
 
   const scrollTo = (id: string) => {
+    soundFx.playClick();
     setIsOpen(false);
     const element = document.getElementById(id);
     if (element) {
@@ -66,11 +75,24 @@ export function CommandPalette() {
   const copyEmail = () => {
     navigator.clipboard.writeText(personalInfo.email);
     setCopied(true);
+    soundFx.playSuccess();
     setTimeout(() => setCopied(false), 2000);
   };
 
   const items: CommandItem[] = useMemo(
     () => [
+      {
+        id: "action-recruiter",
+        title: "Open Recruiter Quick-Scan (60-sec TL;DR)",
+        category: "Actions",
+        icon: <Zap className="w-4 h-4 text-amber-400" />,
+        action: () => {
+          soundFx.playPop(1200);
+          setIsOpen(false);
+          setRecruiterOpen(true);
+        },
+        keywords: ["recruiter", "summary", "tldr", "quick", "scan", "skills", "hire"],
+      },
       {
         id: "proj-summarizer",
         title: "Summarizer — AI Book & Voice Discussion App (App Store)",
@@ -144,6 +166,14 @@ export function CommandPalette() {
         keywords: ["experience", "technext", "career", "history"],
       },
       {
+        id: "nav-lab",
+        title: "Go to Interactive UI Lab (Micro-Demos)",
+        category: "Navigation",
+        icon: <Cpu className="w-4 h-4 text-indigo-400" />,
+        action: () => scrollTo("lab"),
+        keywords: ["lab", "playground", "demos", "spring", "audio", "streaming", "experiments"],
+      },
+      {
         id: "nav-philosophy",
         title: "Go to Development Philosophy",
         category: "Navigation",
@@ -172,6 +202,21 @@ export function CommandPalette() {
         keywords: ["copy", "email", "address", "contact"],
       },
       {
+        id: "action-sound",
+        title: soundFx.getMuted() ? "Enable Interface Sounds" : "Mute Interface Sounds",
+        category: "Actions",
+        icon: soundFx.getMuted() ? (
+          <Volume2 className="w-4 h-4 text-indigo-400" />
+        ) : (
+          <VolumeX className="w-4 h-4 text-zinc-400" />
+        ),
+        action: () => {
+          soundFx.toggleMute();
+          setIsOpen(false);
+        },
+        keywords: ["sound", "audio", "mute", "unmute", "effects"],
+      },
+      {
         id: "action-theme",
         title: `Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`,
         category: "Actions",
@@ -182,6 +227,7 @@ export function CommandPalette() {
             <Moon className="w-4 h-4 text-indigo-400" />
           ),
         action: () => {
+          soundFx.playPop(1000);
           toggleTheme();
           setIsOpen(false);
         },
@@ -189,10 +235,11 @@ export function CommandPalette() {
       },
       {
         id: "ext-resume",
-        title: "View Resume (CV)",
+        title: "View Resume (CV PDF)",
         category: "External Links",
         icon: <FileText className="w-4 h-4 text-zinc-400" />,
         action: () => {
+          soundFx.playClick();
           setIsOpen(false);
           window.open(socialLinks.find((l) => l.name === "Resume")?.url || "#", "_blank");
         },
@@ -204,6 +251,7 @@ export function CommandPalette() {
         category: "External Links",
         icon: <GithubIcon className="w-4 h-4 text-zinc-400" />,
         action: () => {
+          soundFx.playClick();
           setIsOpen(false);
           window.open(socialLinks.find((l) => l.name === "GitHub")?.url || "#", "_blank");
         },
@@ -215,6 +263,7 @@ export function CommandPalette() {
         category: "External Links",
         icon: <LinkedinIcon className="w-4 h-4 text-zinc-400" />,
         action: () => {
+          soundFx.playClick();
           setIsOpen(false);
           window.open(socialLinks.find((l) => l.name === "LinkedIn")?.url || "#", "_blank");
         },
@@ -226,6 +275,7 @@ export function CommandPalette() {
         category: "External Links",
         icon: <ExternalLink className="w-4 h-4 text-indigo-400" />,
         action: () => {
+          soundFx.playClick();
           setIsOpen(false);
           window.open("https://technext96.com/", "_blank");
         },
@@ -249,9 +299,11 @@ export function CommandPalette() {
   const handleKeyDownInMenu = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      soundFx.playClick(1400, 0.015);
       setSelectedIndex((prev) => (prev + 1) % (filteredItems.length || 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      soundFx.playClick(1400, 0.015);
       setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % (filteredItems.length || 1));
     } else if (e.key === "Enter" && filteredItems[selectedIndex]) {
       e.preventDefault();
@@ -259,103 +311,111 @@ export function CommandPalette() {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Command Palette"
-      className="fixed inset-0 z-[120] flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-md"
-      onClick={() => setIsOpen(false)}
-    >
-      <div
-        className="w-full max-w-xl rounded-2xl bg-[#0e0e12] light:bg-white border border-white/15 dark:border-white/15 light:border-zinc-300 shadow-2xl shadow-black/80 overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Search header */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 dark:border-white/10 light:border-zinc-200">
-          <Search className="w-5 h-5 text-zinc-400" />
-          <input
-            autoFocus
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setSelectedIndex(0);
-            }}
-            onKeyDown={handleKeyDownInMenu}
-            placeholder="Type a command or search sections..."
-            className="flex-1 bg-transparent text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-500 focus:outline-none"
-          />
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="p-1 rounded-md text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900"
-            aria-label="Close command palette"
+    <>
+      {isOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command Palette"
+          className="fixed inset-0 z-[120] flex items-start justify-center pt-24 px-4 bg-black/60 backdrop-blur-md"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="w-full max-w-xl rounded-2xl bg-[#0e0e12] light:bg-white border border-white/15 dark:border-white/15 light:border-zinc-300 shadow-2xl shadow-black/80 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Results List */}
-        <div className="max-h-80 overflow-y-auto p-2">
-          {filteredItems.length === 0 ? (
-            <div className="py-8 text-center text-sm text-zinc-500">
-              No matching commands found.
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {filteredItems.map((item, index) => {
-                const isSelected = index === selectedIndex;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={item.action}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left text-sm transition-colors ${
-                      isSelected
-                        ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/30 dark:bg-indigo-600/20 dark:text-indigo-200 light:bg-indigo-50 light:text-indigo-900 light:border-indigo-200"
-                        : "text-zinc-300 dark:text-zinc-300 light:text-zinc-700 hover:bg-white/[0.04] light:hover:bg-zinc-100 border border-transparent"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="p-1.5 rounded-md bg-white/[0.05] dark:bg-white/[0.05] light:bg-zinc-200">
-                        {item.icon}
-                      </div>
-                      <span className="font-medium">{item.title}</span>
-                    </div>
-                    <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-500 light:text-zinc-400">
-                      {item.category}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Footer info */}
-        <div className="px-4 py-2.5 border-t border-white/10 dark:border-white/10 light:border-zinc-200 bg-white/[0.02] flex items-center justify-between text-[11px] font-mono text-zinc-500">
-          <div className="flex items-center gap-3">
-            <span>↑↓ Navigate</span>
-            <span>↵ Select</span>
-            <span>ESC Close</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative w-4 h-4 rounded-full overflow-hidden border border-indigo-400/40">
-              <Image
-                src="/images/profile/abdurrahman-avatar.png"
-                alt="Abdurrahman"
-                width={16}
-                height={16}
-                className="object-cover"
+            {/* Search header */}
+            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 dark:border-white/10 light:border-zinc-200">
+              <Search className="w-5 h-5 text-zinc-400" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelectedIndex(0);
+                }}
+                onKeyDown={handleKeyDownInMenu}
+                placeholder="Type a command or search sections..."
+                className="flex-1 bg-transparent text-sm text-zinc-100 dark:text-zinc-100 light:text-zinc-900 placeholder:text-zinc-500 focus:outline-none"
               />
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-1 rounded-md text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900"
+                aria-label="Close command palette"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <span>Abdurrahman • TechNext</span>
+
+            {/* Results List */}
+            <div className="max-h-80 overflow-y-auto p-2">
+              {filteredItems.length === 0 ? (
+                <div className="py-8 text-center text-sm text-zinc-500">
+                  No matching commands found.
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredItems.map((item, index) => {
+                    const isSelected = index === selectedIndex;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={item.action}
+                        onMouseEnter={() => setSelectedIndex(index)}
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left text-sm transition-colors ${
+                          isSelected
+                            ? "bg-indigo-600/20 text-indigo-200 border border-indigo-500/30 dark:bg-indigo-600/20 dark:text-indigo-200 light:bg-indigo-50 light:text-indigo-900 light:border-indigo-200"
+                            : "text-zinc-300 dark:text-zinc-300 light:text-zinc-700 hover:bg-white/[0.04] light:hover:bg-zinc-100 border border-transparent"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-1.5 rounded-md bg-white/[0.05] dark:bg-white/[0.05] light:bg-zinc-200">
+                            {item.icon}
+                          </div>
+                          <span className="font-medium">{item.title}</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-500 light:text-zinc-400">
+                          {item.category}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer info */}
+            <div className="px-4 py-2.5 border-t border-white/10 dark:border-white/10 light:border-zinc-200 bg-white/[0.02] flex items-center justify-between text-[11px] font-mono text-zinc-500">
+              <div className="flex items-center gap-3">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>ESC Close</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="relative w-4 h-4 rounded-full overflow-hidden border border-indigo-400/40">
+                  <Image
+                    src="/images/profile/abdurrahman-avatar.png"
+                    alt="Abdurrahman"
+                    width={16}
+                    height={16}
+                    className="object-cover"
+                  />
+                </div>
+                <span>Abdurrahman • TechNext</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Recruiter Scan Modal */}
+      <RecruiterModal
+        isOpen={recruiterOpen}
+        onClose={() => setRecruiterOpen(false)}
+      />
+    </>
   );
 }

@@ -1,13 +1,16 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { personalInfo } from "@/data/profile";
 import { socialLinks } from "@/data/social";
+import { soundFx } from "@/lib/sound";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/Icons";
 import { ArrowUp, FileDown } from "lucide-react";
 
 export function Footer() {
   const scrollToTop = () => {
+    soundFx.playClick(1200);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -36,6 +39,7 @@ export function Footer() {
                 href={personalInfo.companyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => soundFx.playClick()}
                 className="text-zinc-300 dark:text-zinc-300 light:text-zinc-900 hover:text-indigo-400 underline transition-colors"
               >
                 {personalInfo.company}
@@ -46,42 +50,55 @@ export function Footer() {
 
           {/* Quick Links Navigation (md:col-span-4) */}
           <div className="md:col-span-4 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono">
-            <a
-              href="#work"
+            <Link
+              href="/#work"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               Selected Work
-            </a>
-            <a
-              href="#about"
+            </Link>
+            <Link
+              href="/#about"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               About
-            </a>
-            <a
-              href="#stack"
+            </Link>
+            <Link
+              href="/#stack"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               Tech Stack
-            </a>
-            <a
-              href="#experience"
+            </Link>
+            <Link
+              href="/#experience"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               Experience
-            </a>
-            <a
-              href="#philosophy"
+            </Link>
+            <Link
+              href="/#lab"
+              onClick={() => soundFx.playClick()}
+              className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
+            >
+              UI Lab
+            </Link>
+            <Link
+              href="/#philosophy"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               Philosophy
-            </a>
-            <a
-              href="#contact"
+            </Link>
+            <Link
+              href="/#contact"
+              onClick={() => soundFx.playClick()}
               className="text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
             >
               Contact
-            </a>
+            </Link>
           </div>
 
           {/* Socials & Back to Top (md:col-span-3) */}
@@ -92,6 +109,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
+                onClick={() => soundFx.playClick()}
                 className="p-2 rounded-lg bg-white/[0.04] dark:bg-white/[0.04] light:bg-white border border-white/10 dark:border-white/10 light:border-zinc-300 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
               >
                 <GithubIcon className="w-4 h-4" />
@@ -101,6 +119,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
+                onClick={() => soundFx.playClick()}
                 className="p-2 rounded-lg bg-white/[0.04] dark:bg-white/[0.04] light:bg-white border border-white/10 dark:border-white/10 light:border-zinc-300 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
               >
                 <LinkedinIcon className="w-4 h-4" />
@@ -110,6 +129,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Resume"
+                onClick={() => soundFx.playClick()}
                 className="p-2 rounded-lg bg-white/[0.04] dark:bg-white/[0.04] light:bg-white border border-white/10 dark:border-white/10 light:border-zinc-300 text-zinc-400 hover:text-white dark:hover:text-white light:hover:text-zinc-900 transition-colors"
               >
                 <FileDown className="w-4 h-4" />
